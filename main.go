@@ -17,10 +17,10 @@ import (
 	"github.com/alexflint/go-arg"
 
 	"github.com/xo/dburl"
-	"github.com/xo/xo/internal"
-	"github.com/xo/xo/models"
+	"github.com/MizukiSonoko/xo/internal"
+	"github.com/MizukiSonoko/xo/models"
 
-	_ "github.com/xo/xo/loaders"
+	_ "github.com/MizukiSonoko/xo/loaders"
 	_ "github.com/xo/xoutil"
 )
 
