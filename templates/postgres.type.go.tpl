@@ -36,7 +36,6 @@ func ({{ $short }} *{{ .Name }}) Insert(db XODB) error {
 		return errors.New("insert failed: already exists")
 	}
 
-{{ if .Table.ManualPk }}
 	// sql insert query, primary key must be provided
 	const sqlstr = `INSERT INTO {{ $table }} (` +
 		`{{ colnames .Fields }}` +
@@ -46,25 +45,10 @@ func ({{ $short }} *{{ .Name }}) Insert(db XODB) error {
 
 	// run query
 	XOLog(sqlstr, {{ fieldnames .Fields $short }})
-	err = db.QueryRow(sqlstr, {{ fieldnames .Fields $short }}).Scan(&{{ $short }}.{{ .PrimaryKey.Name }})
+	_, err = db.Exec(sqlstr, {{ fieldnames .Fields $short }})
 	if err != nil {
 		return err
 	}
-{{ else }}
-	// sql insert query, primary key provided by sequence
-	const sqlstr = `INSERT INTO {{ $table }} (` +
-		`{{ colnames .Fields .PrimaryKey.Name }}` +
-		`) VALUES (` +
-		`{{ colvals .Fields .PrimaryKey.Name }}` +
-		`) RETURNING {{ colname .PrimaryKey.Col }}`
-
-	// run query
-	XOLog(sqlstr, {{ fieldnames .Fields $short .PrimaryKey.Name }})
-	err = db.QueryRow(sqlstr, {{ fieldnames .Fields $short .PrimaryKey.Name }}).Scan(&{{ $short }}.{{ .PrimaryKey.Name }})
-	if err != nil {
-		return err
-	}
-{{ end }}
 
 	// set existence
 	{{ $short }}._exists = true
